@@ -31,7 +31,7 @@ type Dist = { quarter: string; net: number; held_in: number; reserve: number; up
 
 const DEFAULTS: Policy = { reserve: 0.1, upstream: 0.05, balanced: 0.5, threshold: 25,
   recent_quarters: 2, backpay_years: 3, vest_days: 30, allow_self_sizing: false };
-export const VERSION = "0.1.0"; // x-release-please-version
+export const VERSION = "0.2.0"; // x-release-please-version
 const DAY = 86_400_000;
 const r2 = (x: number) => Math.round(x * 100) / 100;
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);

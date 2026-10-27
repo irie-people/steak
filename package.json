@@ -1,6 +1,6 @@
 {
   "name": "steak",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A contribution ledger that pays open-source money back by the value of the work",
   "license": "MIT",
   "type": "module",

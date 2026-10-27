@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+- Conventional Commits and release-please for every project: `steak init --code` also writes the
+  `commits` workflow (pull request titles and commits), `.github/conventional-commit.sh` (the same
+  check as a commit-msg hook) and release-please's workflow, config and manifest.
+- Steak releases with release-please, which keeps `VERSION` in `src/steak.ts`, `package.json` and
+  this file in step.
+
 ## 0.1.0
 
 - Automation with no LLM calls: `record` (merged PR to change, review, revert and vouch), `suggest`
