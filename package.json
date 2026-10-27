@@ -1,0 +1,10 @@
+{
+  "name": "steak",
+  "version": "0.1.0",
+  "description": "A contribution ledger that pays open-source money back by the value of the work",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "steak": "src/steak.ts" },
+  "files": ["src", "templates", "MODEL.md", "SPEC.md"],
+  "scripts": { "test": "bun src/steak.ts selftest && bun test" }
+}

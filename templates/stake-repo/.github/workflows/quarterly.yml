@@ -1,0 +1,45 @@
+# Quarterly payout, no LLM. Runs the 2nd of Jan/Apr/Jul/Oct for the quarter that just ended.
+#   variable OPENCOLLECTIVE_SLUG (optional): read the net received from Open Collective's public API
+#   or run it by hand with a net amount. Paying is still done by each payee invoicing the fiscal host.
+name: quarterly payout
+on:
+  schedule:
+    - cron: "0 12 2 1,4,7,10 *"
+  workflow_dispatch:
+    inputs:
+      quarter: { description: "YYYY-Qn (default: the quarter that just ended)", required: false }
+      net: { description: "Net USD received (default: from Open Collective)", required: false }
+permissions:
+  contents: write
+  issues: write
+jobs:
+  payout:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      Q_IN: ${{ inputs.quarter }}
+      NET_IN: ${{ inputs.net }}
+      OC_SLUG: ${{ vars.OPENCOLLECTIVE_SLUG }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: oven-sh/setup-bun@v2
+      - name: Compute, stamp, tag and announce
+        run: |
+          q="${Q_IN:-$(bun tools/steak.ts quarter)}"
+          if [ -f "distributions/$q.json" ]; then echo "$q is already distributed"; exit 0; fi
+          net="$NET_IN"
+          if [ -z "$net" ]; then
+            if [ -z "$OC_SLUG" ]; then echo "No net amount and no OPENCOLLECTIVE_SLUG; nothing to distribute."; exit 0; fi
+            net=$(bun tools/steak.ts revenue --opencollective "$OC_SLUG" --quarter "$q")
+          fi
+          if ! awk -v n="$net" 'BEGIN { exit !(n > 0) }'; then echo "No revenue in $q ($net)."; exit 0; fi
+          bun tools/steak.ts compute . "$q" "$net"
+          bun tools/steak.ts verify .
+          pip install -q opentimestamps-client && ots stamp "distributions/$q.json"
+          git config user.name "steak-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add distributions && git commit -q -m "Distribute $q" && git tag "payout-$q"
+          git push -q origin HEAD --tags
+          bun tools/steak.ts report . "$q" > body.md
+          gh issue create --title "Payout $q" --body-file body.md
