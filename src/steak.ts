@@ -2,7 +2,8 @@
 // Steak: a contribution ledger that pays money back by the value of the work, if money ever arrives.
 //   steak init    <stake-repo> --name <project> --org <org> --founder <handle> [--code <code-repo>]
 //                 [--reserve 10 --upstream 5 --threshold 25 --backpay-years 3 --vest-days 30]
-//                                                  create a stake repo from templates/; never overwrites a file
+//                                                  create a stake repo from templates/, and with --code the code
+//                                                  repo's workflows and release-please config; never overwrites a file
 //   steak vendor  <stake-repo>                     replace its tools/steak.ts with this version
 //   steak steak   <stake-repo> [YYYY-Qn]           lifetime and recent Steak per handle, plus rule violations
 //   steak compute <stake-repo> <YYYY-Qn> <net-usd> write distributions/<quarter>.json
@@ -30,7 +31,7 @@ type Dist = { quarter: string; net: number; held_in: number; reserve: number; up
 
 const DEFAULTS: Policy = { reserve: 0.1, upstream: 0.05, balanced: 0.5, threshold: 25,
   recent_quarters: 2, backpay_years: 3, vest_days: 30, allow_self_sizing: false };
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.0"; // x-release-please-version
 const DAY = 86_400_000;
 const r2 = (x: number) => Math.round(x * 100) / 100;
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
@@ -200,27 +201,29 @@ function init(repo: string, opts: Record<string, string>) {
   };
   const fill = (s: string) => s.replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => vars[k] ?? m);
   const made: string[] = [], kept: string[] = [];
-  const src = join(templates, "stake-repo");
-  for (const f of readdirSync(src, { recursive: true }).map(String)) {
-    const s = join(src, f), d = join(repo, f);
-    if (!statSync(s).isFile()) continue;
-    if (existsSync(d)) { kept.push(d); continue; }
-    mkdirSync(dirname(d), { recursive: true });
-    writeFileSync(d, fill(readFileSync(s, "utf8")));
-    made.push(d);
-  }
+  // Copy a template folder, filled in, keeping every file that's already there.
+  const copy = (from: string, to: string, skip: string[] = []) => {
+    for (const f of readdirSync(from, { recursive: true }).map(String)) {
+      const s = join(from, f), d = join(to, f);
+      if (skip.includes(f) || !statSync(s).isFile()) continue;
+      if (existsSync(d)) { kept.push(d); continue; }
+      mkdirSync(dirname(d), { recursive: true });
+      writeFileSync(d, fill(readFileSync(s, "utf8")));
+      made.push(d);
+    }
+  };
+  copy(join(templates, "stake-repo"), repo);
   const tool = join(repo, "tools", "steak.ts");
   if (existsSync(tool)) kept.push(tool); else made.push(vendor(repo));
   if (opts.code) {
-    // The code repo gets the README funding section and the PR automation workflow.
+    // The code repo gets the README funding section, then the rest of templates/project: the PR automation, the
+    // commits check (also its commit-msg hook) and release-please's workflow, config and manifest.
     const readme = join(opts.code, "README.md");
     const section = fill(readFileSync(join(templates, "project", "FUNDING-README.md"), "utf8"));
     const have = existsSync(readme) ? readFileSync(readme, "utf8") : "";
     if (have.includes("## Free, and paid back")) kept.push(readme);
     else { mkdirSync(opts.code, { recursive: true }); writeFileSync(readme, have ? `${have.trimEnd()}\n\n${section}` : `# ${opts.name}\n\n${section}`); made.push(`${readme} (funding section)`); }
-    const wf = join(opts.code, ".github", "workflows", "steak.yml");
-    if (existsSync(wf)) kept.push(wf);
-    else { mkdirSync(dirname(wf), { recursive: true }); writeFileSync(wf, fill(readFileSync(join(templates, "project", ".github", "workflows", "steak.yml"), "utf8"))); made.push(wf); }
+    copy(join(templates, "project"), opts.code, ["FUNDING-README.md"]);
   }
   return { made, kept };
 }

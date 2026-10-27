@@ -12,7 +12,7 @@ equity, a token or a debt.
 |---|---|
 | [MODEL.md](MODEL.md) | The model: who gets paid, how much, and why it's shaped this way |
 | [SPEC.md](SPEC.md) | The stake repo's files and formats, and what `verify` checks |
-| [templates/](templates/) | What `steak init` writes into a new stake repo |
+| [templates/](templates/) | What `steak init` writes into a new stake repo, and with `--code` into the code repo |
 
 ## Use it
 
@@ -22,11 +22,13 @@ to its code repo.
 ```sh
 # from a checkout of this repo
 bun src/steak.ts init ../myproject-stake --name myproject --org myproject-hq --founder <handle> \
-  --code ../myproject        # README "Free, and paid back" section + .github/workflows/steak.yml
+  --code ../myproject        # README "Free, and paid back" section, workflows, release-please config
 ```
 
 `init` never overwrites a file. Each stake repo carries its own copy of the tool at
-`tools/steak.ts`, so anyone can recompute a payout without this repo.
+`tools/steak.ts`, so anyone can recompute a payout without this repo. `--code` gives the
+code repo the README section and the rest of [templates/project/](templates/project/): the
+`steak` workflow, the `commits` check and release-please (see "Releases and commit messages").
 
 Options for `init`: `--reserve 10 --upstream 5 --threshold 25 --backpay-years 3 --vest-days 30`.
 
@@ -60,6 +62,27 @@ Left to people:
 | Support and triage hours | `steak add` once a month, about 1 Steak per two hours |
 | Opting out of payouts | `payees/<handle>.toml` with `opt_out = true`, before the quarter |
 | Paying | Each payee invoices the fiscal host for the amount in the payout issue |
+
+## Releases and commit messages
+
+Every commit subject and pull request title is a
+[Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/), such as
+`fix(parser): handle empty input`, and release-please turns them into releases.
+
+| When | What runs | Where |
+|---|---|---|
+| A commit is made | The commit-msg hook runs `sh .github/conventional-commit.sh "$1"`, which refuses a subject that isn't conventional and prints the nearest one that passes | each clone's `.git/hooks/commit-msg` |
+| A PR opens, updates or is retitled | The same check on its title and on every commit in it | code repo `commits.yml` |
+| A push to `main` | release-please opens or updates a release PR with the next version (from `feat`, `fix` and `!` since the last release) and CHANGELOG.md | code repo `release-please.yml` |
+| The release PR merges | release-please tags `vX.Y.Z` and publishes a GitHub release | code repo `release-please.yml` |
+
+Setup, once per project:
+
+| Setting | Where | Value |
+|---|---|---|
+| Workflow permissions | code repo, Settings > Actions > General | Allow GitHub Actions to create pull requests. release-please runs on the built-in `GITHUB_TOKEN`, so the PRs it opens start no workflows; if `commits` is a required check, close and reopen the release PR to run it |
+| The hook | `.git/hooks/commit-msg` in each clone | `sh .github/conventional-commit.sh "$1" \|\| exit 1` at the end of the hook you have, or as the whole hook |
+| The current version | `.release-please-manifest.json` | `0.0.0` until the first release, which is `initial-version` (0.1.0). A project that has released already puts its version here, lists the files that hold it under `extra-files` in `release-please-config.json`, and pushes a `v<version>` tag on the commit that carries it; without that tag, release-please counts the whole history as unreleased |
 
 ## Commands
 

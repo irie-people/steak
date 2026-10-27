@@ -7,7 +7,11 @@ money goes back to the people who build it: see [steak-hq/stake](https://github.
 2. Sign off your commits (`git commit -s`). That certifies the
    [Developer Certificate of Origin](https://developercertificate.org/): you have
    the right to submit the work under the project's license.
-3. Say in the pull request if an agent wrote part of the change. You answer for
+3. Write the pull request title and each commit subject as a
+   [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/), such as
+   `fix(parser): handle empty input`. release-please builds the changelog from
+   them, and the `commits` check refuses anything else.
+4. Say in the pull request if an agent wrote part of the change. You answer for
    every line. Drive-by generated changes are closed.
-4. A maintainer sizes merged work in Steak (`steak:N`). Steak starts once a
+5. A maintainer sizes merged work in Steak (`steak:N`). Steak starts once a
    maintainer vouches for you, usually after your first merged change.

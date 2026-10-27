@@ -70,6 +70,8 @@ Ids are `YYYY-MM-NNNN`, the next free number in the merge month.
 
 ## Versioning
 
-Steak follows semver. A change to the formula, an event field or a `stake.toml`
-key is a major version. Each stake repo pins the version in its vendored
-`tools/steak.ts` header and moves with `steak vendor`.
+Steak follows semver, and release-please cuts each release from Conventional
+Commits. A change to the formula, an event field or a `stake.toml` key is a major
+version: mark it breaking (`feat!:`) and release-please makes it one. Each stake
+repo pins the version in its vendored `tools/steak.ts` header and moves with
+`steak vendor`.

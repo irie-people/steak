@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { add, applyRecorded, compute, heuristic, record, report, suggest, previousQuarter, verify, write, type PR } from "../src/steak";
+import { add, applyRecorded, compute, heuristic, record, report, suggest, previousQuarter, verify, write, VERSION, type PR } from "../src/steak";
 
 const repo = (vouch = "alice 2027-01-01\ncarol 2027-01-01\ndan 2027-01-01\n") => {
   const d = mkdtempSync(join(tmpdir(), "steak-test-"));
@@ -138,4 +138,63 @@ test("report and previousQuarter", () => {
   expect(report(compute(d, "2027-Q2", 1000))).toContain("| alice | sent |");
   expect(previousQuarter(new Date("2027-01-02T12:00:00Z"))).toBe("2026-Q4");
   expect(previousQuarter(new Date("2027-07-02T12:00:00Z"))).toBe("2027-Q2");
+});
+
+const root = join(import.meta.dir, "..");
+const check = (args: string[], cwd = root) =>
+  Bun.spawnSync(["sh", join(root, "templates", "project", ".github", "conventional-commit.sh"), ...args], { cwd, stdout: "pipe", stderr: "pipe" });
+
+test("the commit check passes Conventional Commits and names the nearest subject for the rest", () => {
+  for (const s of ["feat: add export", "fix(parser): handle empty input", "feat(api)!: drop v1", "chore(main): release 1.2.0",
+    'Revert "feat: add export"', "fixup! fix: typo"])
+    expect([s, check(["--title", s]).exitCode]).toEqual([s, 0]);
+  const nearest = (s: string) => {
+    const r = check(["--title", s]);
+    expect(r.exitCode).toBe(1);
+    return /^ {2}write: (.*)$/m.exec(r.stderr.toString())?.[1];
+  };
+  expect(nearest("Add CSV export")).toBe("feat: Add CSV export");
+  expect(nearest("Feat: add export")).toBe("feat: add export");
+  expect(nearest("fix:handle empty input")).toBe("fix: handle empty input");
+  expect(nearest("feature (api)!: drop v1")).toBe("feat(api)!: drop v1");
+  expect(nearest("feat(): empty scope")).toBe("feat: empty scope");
+  expect(nearest("Bump the parser")).toBe("build: Bump the parser");
+  expect(nearest("WIP")).toBe("chore: WIP");
+});
+
+test("as the commit-msg hook it reads past comments and lets merges through", () => {
+  const d = mkdtempSync(join(tmpdir(), "steak-git-"));
+  expect(Bun.spawnSync(["git", "init", "-q", d]).exitCode).toBe(0);
+  const msg = join(d, "COMMIT_EDITMSG");
+  writeFileSync(msg, "# Please enter the commit message\n\nfix: handle empty input\r\n\nSigned-off-by: alice <alice@example.com>\n");
+  expect(check([msg], d).exitCode).toBe(0);
+  writeFileSync(msg, "Merge branch 'live'\n");
+  expect(check([msg], d).stderr.toString()).toContain("Nothing was committed");
+  writeFileSync(join(d, ".git", "MERGE_HEAD"), "0".repeat(40) + "\n");
+  expect(check([msg], d).exitCode).toBe(0);
+});
+
+test("init writes a project's workflows and release-please files once, then keeps them", () => {
+  const d = mkdtempSync(join(tmpdir(), "steak-init-")), stake = join(d, "demo-stake"), code = join(d, "demo");
+  const init = () => Bun.spawnSync([process.execPath, join(root, "src", "steak.ts"), "init", stake,
+    "--name", "demo", "--org", "demo-hq", "--founder", "alice", "--code", code], { stdout: "pipe", stderr: "pipe" });
+  expect(init().exitCode).toBe(0);
+  for (const f of [".github/workflows/steak.yml", ".github/workflows/commits.yml", ".github/workflows/release-please.yml",
+    ".github/conventional-commit.sh", "release-please-config.json", ".release-please-manifest.json"])
+    expect(readFileSync(join(code, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{ORG}}", "demo-hq"));
+  expect(existsSync(join(code, "FUNDING-README.md"))).toBe(false);
+  writeFileSync(join(code, ".release-please-manifest.json"), '{\n  ".": "2.3.4"\n}\n');
+  expect(init().stdout.toString()).toContain("kept existing:");
+  expect(JSON.parse(readFileSync(join(code, ".release-please-manifest.json"), "utf8"))["."]).toBe("2.3.4");
+});
+
+test("Steak's own .github is what init writes into a project, and every file that holds the version agrees", () => {
+  for (const f of [".github/conventional-commit.sh", ".github/workflows/commits.yml", ".github/workflows/release-please.yml", ".github/workflows/steak.yml"])
+    expect(readFileSync(join(root, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{ORG}}", "steak-hq"));
+  const json = (f: string) => JSON.parse(readFileSync(join(root, f), "utf8"));
+  expect([json("package.json").version, json(".release-please-manifest.json")["."]]).toEqual([VERSION, VERSION]);
+  expect(readFileSync(join(root, "src", "steak.ts"), "utf8")).toContain(`VERSION = "${VERSION}"; // x-release-please-version`);
+  // release-please heads each entry "## [1.2.0](compare link) (date)"; the first entry is the current version.
+  const top = /^## (.*)$/m.exec(readFileSync(join(root, "CHANGELOG.md"), "utf8"))?.[1] ?? "";
+  expect(top.startsWith(VERSION) || top.startsWith(`[${VERSION}]`)).toBe(true);
 });
