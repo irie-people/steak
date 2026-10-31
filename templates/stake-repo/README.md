@@ -1,7 +1,7 @@
 # {{NAME}} stake
 
 The public record of who built {{NAME}} and how money, if any ever arrives, is
-shared. Read [STAKE.md](STAKE.md). It follows the [Steak framework](https://github.com/steak-hq/steak) ({{STEAK_VERSION}}).
+shared. Read [STAKE.md](STAKE.md). It follows the [Steak framework](https://github.com/irie-people/steak) ({{STEAK_VERSION}}).
 
 | Path | What |
 |---|---|

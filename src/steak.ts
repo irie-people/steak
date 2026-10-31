@@ -180,7 +180,7 @@ export function compute(repo: string, q: string, net: number, from?: Dist): Dist
 
 // Stake repos carry a copy of this file at tools/steak.ts so anyone can verify payouts offline.
 const templates = join(import.meta.dir, "..", "templates");
-const vendorHeader = (src: string) => src.replace(/^#!.*\n/, (s) => `${s}// Vendored from steak-hq/steak v${VERSION}. Update with \`steak vendor .\`; don't edit by hand.\n`);
+const vendorHeader = (src: string) => src.replace(/^#!.*\n/, (s) => `${s}// Vendored from irie-people/steak v${VERSION}. Update with \`steak vendor .\`; don't edit by hand.\n`);
 
 function vendor(repo: string) {
   const dest = join(repo, "tools", "steak.ts");

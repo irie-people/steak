@@ -5,4 +5,4 @@
 after running costs, in proportion to the value of what they contributed. The
 founder started with zero Steak and earns it the same way as everyone else. The
 record is public: [{{STAKE_REPO}}](https://github.com/{{STAKE_REPO}}). It runs on
-[Steak](https://github.com/steak-hq/steak) {{STEAK_VERSION}}.
+[Steak](https://github.com/irie-people/steak) {{STEAK_VERSION}}.

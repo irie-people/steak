@@ -103,7 +103,7 @@ Nothing here is legal or tax advice.
 ## Free, and paid back
 
 Steak runs on Steak: contributions to this repo are recorded in
-[steak-hq/stake](https://github.com/steak-hq/stake).
+[irie-people/steak-stake](https://github.com/irie-people/steak-stake).
 
 ## License
 

@@ -20,4 +20,4 @@ Write every commit subject and pull request title as a [Conventional Commit](htt
 
 ## Stake
 
-Contributions earn Steak under [steak-hq/stake](https://github.com/steak-hq/stake). Agree anything sizeable in an issue first, and say when an agent wrote part of a change.
+Contributions earn Steak under [irie-people/steak-stake](https://github.com/irie-people/steak-stake). Agree anything sizeable in an issue first, and say when an agent wrote part of a change.

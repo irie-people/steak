@@ -199,7 +199,7 @@ test("init --stake names a stake repo outside the <org>/stake convention, as whe
 
 test("Steak's own .github is what init writes into a project, and every file that holds the version agrees", () => {
   for (const f of [".github/conventional-commit.sh", ".github/workflows/commits.yml", ".github/workflows/release-please.yml", ".github/workflows/steak.yml"])
-    expect(readFileSync(join(root, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{STAKE_REPO}}", "steak-hq/stake"));
+    expect(readFileSync(join(root, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{STAKE_REPO}}", "irie-people/steak-stake"));
   const json = (f: string) => JSON.parse(readFileSync(join(root, f), "utf8"));
   expect([json("package.json").version, json(".release-please-manifest.json")["."]]).toEqual([VERSION, VERSION]);
   expect(readFileSync(join(root, "src", "steak.ts"), "utf8")).toContain(`VERSION = "${VERSION}"; // x-release-please-version`);
