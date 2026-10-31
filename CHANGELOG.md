@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/irie-people/steak/compare/v0.2.0...v0.3.0) (2026-10-31)
+
+
+### Features
+
+* **init:** name the stake repo with --stake, for projects that share an org ([87afd48](https://github.com/irie-people/steak/commit/87afd489be6182c09a9835f9854e40561d6a0629))
+
 ## 0.2.0
 
 - Conventional Commits and release-please for every project: `steak init --code` also writes the
