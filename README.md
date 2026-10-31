@@ -10,6 +10,7 @@ equity, a token or a debt.
 
 | Read | For |
 |---|---|
+| [The website](https://irie-people.github.io/steak/) | Steak on one page: how it works, the deal, and how to use it |
 | [MODEL.md](MODEL.md) | The model: who gets paid, how much, and why it's shaped this way |
 | [SPEC.md](SPEC.md) | The stake repo's files and formats, and what `verify` checks |
 | [templates/](templates/) | What `steak init` writes into a new stake repo, and with `--code` into the code repo |

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Steak · free today, paid back if money comes</title>
+<meta name="description" content="Steak is a way to run an open-source project so that if it ever makes money, all of it goes back to the people who build it, by the value of their work.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+
+<header class="site-header">
+  <a class="brand" href="./">
+    <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#7A2E1F"/><path d="M26.5 11h11v29l-5.5 11-5.5-11z" fill="#F2B544"/><path d="M13 46h38" stroke="#FBEFEA" stroke-width="3.2" stroke-linecap="round"/></svg>
+    <span>Steak</span>
+  </a>
+  <nav aria-label="Site">
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#deal">The deal</a></li>
+      <li><a href="#use">Use it</a></li>
+      <li><a href="https://github.com/irie-people/steak/blob/main/MODEL.md">Model</a></li>
+      <li><a href="https://github.com/irie-people/steak">Code</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <p class="kicker">A play on <dfn>stake</dfn>: a public record of work. Not money, shares, a token or a debt.</p>
+    <h1>Get the value you'd pay for, free, today.</h1>
+    <p class="lede">Steak is a way to run an open-source project so that if it ever makes money (donations, sponsorships, grants), all of it goes back to the people who build it, after running costs, by the value of what they contributed. The founder starts with zero Steak and earns it like everyone else.</p>
+    <div class="actions">
+      <a class="button" href="#use">Use it</a>
+      <a class="button quiet" href="https://github.com/irie-people/steak/blob/main/MODEL.md">Read the model</a>
+    </div>
+  </section>
+
+  <section id="how" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps">
+      <li><strong>A public record beside the code.</strong> Each project keeps a stake repository next to its code. Every change, review and payout lands there in plain files anyone can read.</li>
+      <li><strong>People size the work.</strong> When a pull request opens, Steak suggests a size from the diff. A maintainer other than the author decides, with a label: <code>steak:1</code>, 2, 3, 5, 8, 13 or 21.</li>
+      <li><strong>Merges are recorded for you.</strong> When the pull request merges, a workflow writes the change and its reviews to the stake repository. A review earns a quarter of the change's size, for up to two reviewers.</li>
+      <li><strong>Money, if it comes, goes out each quarter.</strong> First a reserve, then the projects it builds on, then everything else to contributors by their Steak. It is paid through a fiscal host such as Open Collective, never through a personal account.</li>
+      <li><strong>Anyone can check it.</strong> Each stake repository carries its own copy of the tool, and <code>steak verify</code> recomputes every payout from the record.</li>
+    </ol>
+    <p>All of it runs in GitHub Actions as plain code. There are no AI calls, unless you choose a small local model to suggest sizes.</p>
+  </section>
+
+  <section id="deal" aria-labelledby="deal-h">
+    <h2 id="deal-h">The deal</h2>
+    <div class="table-wrap">
+      <table>
+        <tbody>
+          <tr><th scope="row">Users</th><td>Get the product free, today</td></tr>
+          <tr><th scope="row">Money in</th><td>Donations, sponsorships and grants, received by the project's fiscal host</td></tr>
+          <tr><th scope="row">Money out</th><td>Each quarter with revenue: a reserve, then upstream projects, then everything else to contributors</td></tr>
+          <tr><th scope="row">Contributors</th><td>Paid by the value of merged work, sized in Steak by a maintainer</td></tr>
+          <tr><th scope="row">Founder</th><td>Starts at zero Steak, earns it under one disclosed account, sized by someone else</td></tr>
+          <tr><th scope="row">Nobody</th><td>Owns the project, votes over its money, or holds a claim that can be sold</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The formula, and why it has this shape, are in <a href="https://github.com/irie-people/steak/blob/main/MODEL.md">MODEL.md</a>. The files and formats are in <a href="https://github.com/irie-people/steak/blob/main/SPEC.md">SPEC.md</a>.</p>
+  </section>
+
+  <section id="use" aria-labelledby="use-h">
+    <h2 id="use-h">Use it</h2>
+    <p>Steak runs on <a href="https://bun.sh">Bun</a>. From a checkout of Steak, set up a project's stake repository, and with <code>--code</code> the code repository's workflows:</p>
+<pre><code>git clone https://github.com/irie-people/steak
+cd steak
+bun src/steak.ts init ../myproject-stake --name myproject --org myproject-org \
+  --founder &lt;handle&gt; --code ../myproject</code></pre>
+    <p><code>init</code> never overwrites a file. Then, once per project, give the code repository a <code>STAKE_TOKEN</code> secret (a fine-grained token that can write the stake repository's contents and pull requests), and run its <code>steak</code> workflow by hand once to make the <code>steak:N</code> labels. The <a href="https://github.com/irie-people/steak#readme">README</a> lists every setting.</p>
+  </section>
+
+  <section aria-labelledby="runs-h">
+    <h2 id="runs-h">Who runs on Steak</h2>
+    <p>Irie, Riddim and Steak itself. Their records are public: <a href="https://github.com/irie-people/stake">Irie's</a>, <a href="https://github.com/irie-people/riddim-stake">Riddim's</a> and <a href="https://github.com/irie-people/steak-stake">Steak's</a>.</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <nav class="family" aria-label="Irie People">
+    <a href="https://irie-people.github.io/"><strong>Irie People</strong></a>
+    <a href="https://irie-people.github.io/irie/"><span class="dot irie" aria-hidden="true"></span>Irie</a>
+    <a href="https://irie-people.github.io/riddim/"><span class="dot riddim" aria-hidden="true"></span>Riddim</a>
+    <a href="https://irie-people.github.io/steak/" aria-current="page"><span class="dot steak" aria-hidden="true"></span>Steak</a>
+  </nav>
+  <p>Steak is free under the <a href="https://github.com/irie-people/steak/blob/main/LICENSE">MIT license</a>. It is built from public documentation, and every source is listed in <a href="https://github.com/irie-people/steak/blob/main/PROVENANCE.md">PROVENANCE.md</a>.</p>
+  <p>Payouts are discretionary pay for completed work. Nothing here is legal or tax advice.</p>
+</footer>
+</body>
+</html>

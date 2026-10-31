@@ -13,6 +13,7 @@ steak is written from public documentation and public open-source projects. Ever
 | 2026-10-27 | release-please docs and source (github.com/googleapis/release-please: docs/manifest-releaser.md, docs/customizing.md, schemas/config.json, src/manifest.ts, src/commit.ts) and the release-please-action README (github.com/googleapis/release-please-action) | `release-please.yml`, the config and manifest, the `x-release-please-version` annotation, types in lower case (release-please doesn't fold case), and tagging a project's current version before its first run |
 | 2026-10-27 | Git's githooks documentation (git-scm.com/docs/githooks) | `git merge` runs the commit-msg hook too, so the check lets a merge through |
 | 2026-10-27 | commitlint's default ignores (github.com/conventional-changelog/commitlint, @commitlint/is-ignored) | Which generated subjects pass: git's reverts and reapplies, and fixup!, squash! and amend! commits |
+| 2026-10-31 | https://github.com/irie-people/irie (`site/style.css`, `site/index.html`, `.github/workflows/pages.yml`; Apache-2.0, the same project family) ; https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages | `site/`: the layout, type scale and footer shared by the irie-people sites, and `pages.yml`, which publishes `site/` with GitHub's own Pages actions |
 
 ## Built on
 

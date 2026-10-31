@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Steak's mark: a gold stake set in the ground, on oxblood. Steak is a
+       play on stake. -->
+  <rect width="64" height="64" rx="14" fill="#7A2E1F"/>
+  <path d="M26.5 11h11v29l-5.5 11-5.5-11z" fill="#F2B544"/>
+  <path d="M13 46h38" stroke="#FBEFEA" stroke-width="3.2" stroke-linecap="round"/>
+</svg>
