@@ -4,5 +4,5 @@
 (donations, sponsorships, grants), it all goes back to the people who build it,
 after running costs, in proportion to the value of what they contributed. The
 founder started with zero Steak and earns it the same way as everyone else. The
-record is public: [{{ORG}}/stake](https://github.com/{{ORG}}/stake). It runs on
+record is public: [{{STAKE_REPO}}](https://github.com/{{STAKE_REPO}}). It runs on
 [Steak](https://github.com/steak-hq/steak) {{STEAK_VERSION}}.

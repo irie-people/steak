@@ -181,16 +181,25 @@ test("init writes a project's workflows and release-please files once, then keep
   expect(init().exitCode).toBe(0);
   for (const f of [".github/workflows/steak.yml", ".github/workflows/commits.yml", ".github/workflows/release-please.yml",
     ".github/conventional-commit.sh", "release-please-config.json", ".release-please-manifest.json"])
-    expect(readFileSync(join(code, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{ORG}}", "demo-hq"));
+    expect(readFileSync(join(code, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{STAKE_REPO}}", "demo-hq/stake"));
   expect(existsSync(join(code, "FUNDING-README.md"))).toBe(false);
   writeFileSync(join(code, ".release-please-manifest.json"), '{\n  ".": "2.3.4"\n}\n');
   expect(init().stdout.toString()).toContain("kept existing:");
   expect(JSON.parse(readFileSync(join(code, ".release-please-manifest.json"), "utf8"))["."]).toBe("2.3.4");
 });
 
+test("init --stake names a stake repo outside the <org>/stake convention, as when projects share an org", () => {
+  const d = mkdtempSync(join(tmpdir(), "steak-init-")), code = join(d, "demo");
+  const r = Bun.spawnSync([process.execPath, join(root, "src", "steak.ts"), "init", join(d, "demo-stake"), "--name", "demo",
+    "--org", "acme", "--founder", "alice", "--code", code, "--stake", "acme/demo-stake"], { stdout: "pipe", stderr: "pipe" });
+  expect(r.exitCode).toBe(0);
+  expect(readFileSync(join(code, ".github/workflows/steak.yml"), "utf8")).toContain(`STAKE_REPO: "acme/demo-stake"`);
+  expect(readFileSync(join(code, "README.md"), "utf8")).toContain("[acme/demo-stake](https://github.com/acme/demo-stake)");
+});
+
 test("Steak's own .github is what init writes into a project, and every file that holds the version agrees", () => {
   for (const f of [".github/conventional-commit.sh", ".github/workflows/commits.yml", ".github/workflows/release-please.yml", ".github/workflows/steak.yml"])
-    expect(readFileSync(join(root, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{ORG}}", "steak-hq"));
+    expect(readFileSync(join(root, f), "utf8")).toBe(readFileSync(join(root, "templates", "project", f), "utf8").replaceAll("{{STAKE_REPO}}", "steak-hq/stake"));
   const json = (f: string) => JSON.parse(readFileSync(join(root, f), "utf8"));
   expect([json("package.json").version, json(".release-please-manifest.json")["."]]).toEqual([VERSION, VERSION]);
   expect(readFileSync(join(root, "src", "steak.ts"), "utf8")).toContain(`VERSION = "${VERSION}"; // x-release-please-version`);

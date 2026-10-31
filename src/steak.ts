@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // Steak: a contribution ledger that pays money back by the value of the work, if money ever arrives.
 //   steak init    <stake-repo> --name <project> --org <org> --founder <handle> [--code <code-repo>]
-//                 [--reserve 10 --upstream 5 --threshold 25 --backpay-years 3 --vest-days 30]
+//                 [--stake <org>/stake --reserve 10 --upstream 5 --threshold 25 --backpay-years 3 --vest-days 30]
 //                                                  create a stake repo from templates/, and with --code the code
 //                                                  repo's workflows and release-please config; never overwrites a file
 //   steak vendor  <stake-repo>                     replace its tools/steak.ts with this version
@@ -194,7 +194,8 @@ function init(repo: string, opts: Record<string, string>) {
   for (const k of ["name", "org", "founder"]) if (!opts[k]) throw new Error(`init needs --${k}`);
   const pct = (k: string, d: string) => Number(opts[k] ?? d);
   const vars: Record<string, string> = {
-    NAME: opts.name, ORG: opts.org, FOUNDER_HANDLE: opts.founder, STEAK_VERSION: `v${VERSION}`,
+    NAME: opts.name, ORG: opts.org, STAKE_REPO: opts.stake || `${opts.org}/stake`, FOUNDER_HANDLE: opts.founder,
+    STEAK_VERSION: `v${VERSION}`,
     RESERVE: String(pct("reserve", "10")), UPSTREAM: String(pct("upstream", "5")),
     RESERVE_FRAC: String(pct("reserve", "10") / 100), UPSTREAM_FRAC: String(pct("upstream", "5") / 100),
     THRESHOLD: opts.threshold ?? "25", BACKPAY_YEARS: opts["backpay-years"] ?? "3", VEST_DAYS: opts["vest-days"] ?? "30",

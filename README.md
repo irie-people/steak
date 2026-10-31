@@ -17,7 +17,7 @@ equity, a token or a debt.
 ## Use it
 
 Every project keeps its own public **stake repo** (by convention `<org>/stake`) next
-to its code repo.
+to its code repo. When several projects share an org, `--stake <org>/<name>` names it.
 
 ```sh
 # from a checkout of this repo
