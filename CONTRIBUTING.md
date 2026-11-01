@@ -15,3 +15,6 @@ money goes back to the people who build it: see [irie-people/steak-stake](https:
    every line. Drive-by generated changes are closed.
 5. A maintainer sizes merged work in Steak (`steak:N`). Steak starts once a
    maintainer vouches for you, usually after your first merged change.
+
+Everyone here follows the [Code of Conduct](CODE_OF_CONDUCT.md),
+and [GOVERNANCE.md](GOVERNANCE.md) says how decisions are made.
