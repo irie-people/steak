@@ -14,6 +14,7 @@ steak is written from public documentation and public open-source projects. Ever
 | 2026-10-27 | Git's githooks documentation (git-scm.com/docs/githooks) | `git merge` runs the commit-msg hook too, so the check lets a merge through |
 | 2026-10-27 | commitlint's default ignores (github.com/conventional-changelog/commitlint, @commitlint/is-ignored) | Which generated subjects pass: git's reverts and reapplies, and fixup!, squash! and amend! commits |
 | 2026-10-31 | https://github.com/irie-people/irie (`site/style.css`, `site/index.html`, `.github/workflows/pages.yml`; Apache-2.0, the same project family) ; https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages | `site/`: the layout, type scale and footer shared by the irie-people sites, and `pages.yml`, which publishes `site/` with GitHub's own Pages actions |
+| 2026-11-15 | https://cli.github.com/manual/gh_pr_diff | `steak.yml`: `--allow-escape-sequences`, so the size bot reads a diff that holds terminal escape codes |
 
 ## Built on
 
