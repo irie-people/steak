@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/irie-people/steak/compare/v0.3.0...v0.3.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **template:** let the size bot read diffs that hold terminal escape codes ([e4e915f](https://github.com/irie-people/steak/commit/e4e915f05b8a878d0b3087d22be01eb33cebae77))
+
 ## [0.3.0](https://github.com/irie-people/steak/compare/v0.2.0...v0.3.0) (2026-10-31)
 
 
